@@ -48,15 +48,35 @@
 
         <form id="formAvaliacao" action="https://formsubmit.co/pesquisasemusa@gmail.com" method="POST" class="p-6 sm:p-10 space-y-10">
             
-            <input type="hidden" name="_subject" value="Nova Avaliação de Atendimento em Saúde">
+            <input type="hidden" id="hiddenSubject" name="_subject" value="Nova Avaliação de Atendimento">
             <input type="hidden" name="_captcha" value="false">
             <input type="hidden" name="_template" value="table">
 
+            <section class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                <h2 class="text-xl font-semibold border-b pb-2 mb-4 text-slate-700 flex items-center gap-2">
+                    <span class="bg-brand-100 text-brand-700 p-1.5 rounded-md text-sm">1</span> Identificação do Usuário
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="flex flex-col">
+                        <label class="text-sm font-medium text-slate-600 mb-1">Nome Completo</label>
+                        <input type="text" name="Nome" placeholder="Digite seu nome" required class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none transition bg-white text-slate-700">
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="text-sm font-medium text-slate-600 mb-1">Telefone de Contato</label>
+                        <input type="tel" name="Telefone" placeholder="(00) 00000-0000" required class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none transition bg-white text-slate-700">
+                    </div>
+                    <div class="flex flex-col md:col-span-2">
+                        <label class="text-sm font-medium text-slate-600 mb-1">Endereço Residencial</label>
+                        <input type="text" name="Endereco" placeholder="Rua, número, complemento" required class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none transition bg-white text-slate-700">
+                    </div>
+                </div>
+            </section>
+
             <section>
                 <h2 class="text-xl font-semibold border-b pb-2 mb-6 text-slate-700 flex items-center gap-2">
-                    <span class="bg-brand-100 text-brand-700 p-1.5 rounded-md text-sm">1</span> Dados do Atendimento
+                    <span class="bg-brand-100 text-brand-700 p-1.5 rounded-md text-sm">2</span> Dados do Atendimento
                 </h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
                     <div class="flex flex-col">
                         <label class="text-sm font-medium text-slate-600 mb-1">Data do Atendimento</label>
                         <input type="date" name="Data" required class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none transition bg-slate-50 text-slate-700">
@@ -99,15 +119,21 @@
                         </select>
                     </div>
                     <div class="flex flex-col">
-                        <label class="text-sm font-medium text-slate-600 mb-1">Seu Bairro</label>
-                        <input type="text" name="Bairro" placeholder="Digite seu bairro" required class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none transition bg-slate-50 text-slate-700">
+                        <label class="text-sm font-medium text-slate-600 mb-1">Bairro da Unidade</label>
+                        <input type="text" name="Bairro" placeholder="Digite o bairro" required class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none transition bg-slate-50 text-slate-700">
                     </div>
+                </div>
+
+                <div class="flex flex-col bg-blue-50 p-4 rounded-xl border border-blue-100">
+                    <label class="text-sm font-semibold text-brand-700 mb-1">Motivo Principal / Assunto da Mensagem</label>
+                    <input type="text" id="campoAssunto" name="Assunto Informado" placeholder="Ex: Médico atendeu mal, Demora na consulta, Falta de insumos..." required class="w-full p-3 border border-brand-200 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none transition bg-white text-slate-700 shadow-sm">
+                    <p class="text-xs text-slate-500 mt-1">O texto digitado aqui será usado diretamente como o assunto do e-mail de notificação.</p>
                 </div>
             </section>
 
             <section>
                 <h2 class="text-xl font-semibold border-b pb-2 mb-6 text-slate-700 flex items-center gap-2">
-                    <span class="bg-brand-100 text-brand-700 p-1.5 rounded-md text-sm">2</span> Questionário
+                    <span class="bg-brand-100 text-brand-700 p-1.5 rounded-md text-sm">3</span> Questionário
                 </h2>
                 
                 <div class="space-y-8">
@@ -271,6 +297,10 @@
         document.getElementById("formAvaliacao").addEventListener("submit", function(event) {
             event.preventDefault(); // Impede o redirecionamento padrão
 
+            // CAPTURA O ASSUNTO DIGITADO E ATUALIZA O INPUT HIDDEN ANTES DE DISPARAR
+            const assuntoDigitado = document.getElementById("campoAssunto").value;
+            document.getElementById("hiddenSubject").value = assuntoDigitado;
+
             const btn = document.getElementById("btnEnviar");
             const textoOriginal = btn.innerHTML;
             
@@ -279,7 +309,7 @@
             btn.disabled = true;
             btn.classList.add("opacity-70", "cursor-not-allowed");
 
-            // Cria os dados do formulário
+            // Cria os dados do formulário atualizados
             const formData = new FormData(this);
 
             // Envia para o FormSubmit sem sair da página
@@ -287,7 +317,7 @@
                 method: "POST",
                 body: formData,
                 headers: {
-                    'Accept': 'application/json' // Solicita resposta em JSON para não abrir HTML
+                    'Accept': 'application/json'
                 }
             })
             .then(response => {
@@ -298,9 +328,9 @@
                     
                     const msgSucesso = document.getElementById("mensagemSucesso");
                     msgSucesso.classList.remove("hidden");
-                    msgSucesso.classList.add("flex"); // Mostra com layout flexível
+                    msgSucesso.classList.add("flex");
                     
-                    window.scrollTo({ top: 0, behavior: 'smooth' }); // Rola pro topo suavemente
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else {
                     alert("Ocorreu um erro ao enviar. Tente novamente.");
                     btn.innerHTML = textoOriginal;
@@ -310,7 +340,7 @@
             })
             .catch(error => {
                 console.error("Erro:", error);
-                alert("Erro de conexão. Verifique sua internet e tente novamente.");
+                alert("Erro de conexão. Verifique sua internet.");
                 btn.innerHTML = textoOriginal;
                 btn.disabled = false;
                 btn.classList.remove("opacity-70", "cursor-not-allowed");
