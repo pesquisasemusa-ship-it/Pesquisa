@@ -76,7 +76,7 @@
                 <h2 class="text-xl font-semibold border-b pb-2 mb-6 text-slate-700 flex items-center gap-2">
                     <span class="bg-brand-100 text-brand-700 p-1.5 rounded-md text-sm">2</span> Dados do Atendimento
                 </h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
                     <div class="flex flex-col">
                         <label class="text-sm font-medium text-slate-600 mb-1">Data do Atendimento</label>
                         <input type="date" name="Data" required class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none transition bg-slate-50 text-slate-700">
@@ -120,7 +120,17 @@
                     </div>
                     <div class="flex flex-col">
                         <label class="text-sm font-medium text-slate-600 mb-1">Bairro da Unidade</label>
-                        <input type="text" name="Bairro" placeholder="Digite o bairro" required class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none transition bg-slate-50 text-slate-700">
+                        <input type="text" name="Bairro" placeholder="Digite o bairro da unidade" required class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none transition bg-slate-50 text-slate-700">
+                    </div>
+                    
+                    <div class="flex flex-col">
+                        <label class="text-sm font-medium text-slate-600 mb-1">Quem Atendeu</label>
+                        <select name="Profissional que Atendeu" required class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none transition bg-slate-50 text-slate-700">
+                            <option value="" disabled selected>Selecione o profissional...</option>
+                            <option value="Doegguer">Doegguer</option>
+                            <option value="Renan Batalha">Renan Batalha</option>
+                            <option value="Jefferson Rezende">Jefferson Rezende</option>
+                        </select>
                     </div>
                 </div>
 
