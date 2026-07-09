@@ -48,12 +48,11 @@
             </button>
         </div>
 
-        <!-- Formulário Padrão -->
-        <form id="formAvaliacao" action="https://formsubmit.co/pesquisasemusa@gmail.com" method="POST" class="p-6 sm:p-10 space-y-10">
+        <!-- Formulário Configurado com o Formspree -->
+        <form id="formAvaliacao" action="https://formspree.io/f/xzdllody" method="POST" class="p-6 sm:p-10 space-y-10">
             
-            <input type="hidden" id="hiddenSubject" name="_subject" value="Nova Avaliação de Atendimento">
-            <input type="hidden" name="_captcha" value="false">
-            <input type="hidden" name="_template" value="table">
+            <!-- Campo oculto para o Assunto do Email no Formspree -->
+            <input type="hidden" id="hiddenSubject" name="subject" value="Nova Avaliação de Atendimento">
 
             <!-- Seção 1: Dados Pessoais -->
             <section class="bg-slate-50 p-6 rounded-xl border border-slate-200">
@@ -197,7 +196,7 @@
                         </div>
                     </div>
 
-                    <!-- Q5 (Agora permite múltiplas seleções) -->
+                    <!-- Q5 -->
                     <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
                         <p class="font-medium text-slate-800 mb-1">5. Qual foi a dificuldade encontrada?</p>
                         <p class="text-sm text-slate-500 mb-4">(Você pode marcar mais de uma opção)</p>
@@ -289,12 +288,12 @@
         </form>
     </div>
 
-    <!-- NOVO SCRIPT DE ENVIO VIA AJAX COM SISTEMA DE ATIVAÇÃO (FALLBACK) -->
+    <!-- SCRIPT DE ENVIO VIA AJAX PARA O FORMSPREE -->
     <script>
         document.getElementById("formAvaliacao").addEventListener("submit", function(event) {
-            event.preventDefault(); // Impede o envio padrao imediatamente
+            event.preventDefault(); // Impede o redirecionamento padrão
 
-            // Captura o assunto e injeta no FormSubmit
+            // CAPTURA O ASSUNTO DIGITADO E ATUALIZA O INPUT HIDDEN
             const assuntoDigitado = document.getElementById("campoAssunto").value;
             document.getElementById("hiddenSubject").value = assuntoDigitado;
 
@@ -302,15 +301,15 @@
             const btn = document.getElementById("btnEnviar");
             const textoOriginal = btn.innerHTML;
             
-            // Botão carregando...
+            // Muda o botão para estado de "carregando"
             btn.innerHTML = `<svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Enviando...`;
             btn.disabled = true;
             btn.classList.add("opacity-70", "cursor-not-allowed");
 
             const formData = new FormData(form);
 
-            // Tenta disparar silenciosamente usando o endpoint /ajax/ oficial deles
-            fetch("https://formsubmit.co/ajax/pesquisasemusa@gmail.com", {
+            // Envia para o Formspree sem sair da página
+            fetch(form.action, {
                 method: "POST",
                 body: formData,
                 headers: {
@@ -318,14 +317,8 @@
                 }
             })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error("Redirecionamento bloqueado pelo navegador");
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success || data.success === "true") {
-                    // SE DEU TUDO CERTO NO FUNDO, MOSTRA A TELA VERDE (AJAX FUNCIONANDO!)
+                if (response.ok) {
+                    // SE DEU TUDO CERTO, MOSTRA A MENSAGEM VERDE DE SUCESSO
                     document.getElementById("formAvaliacao").classList.add("hidden");
                     document.getElementById("subtitulo").classList.add("hidden");
                     
@@ -335,19 +328,18 @@
                     
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else {
-                    throw new Error("FormSubmit rejeitou o envio.");
+                    alert("Ocorreu um erro ao enviar. Tente novamente.");
+                    btn.innerHTML = textoOriginal;
+                    btn.disabled = false;
+                    btn.classList.remove("opacity-70", "cursor-not-allowed");
                 }
             })
             .catch(error => {
-                // SE CAIU AQUI: É o primeiro envio e o e-mail pesquisasemusa@gmail.com não foi ativado!
-                // O navegador (CORS) vai bloquear a tentativa, então o código te avisa e faz o envio nativo
-                console.error("Erro pego pelo sistema (Provável necessidade de ativação):", error);
-                
-                alert("Atenção: Por ser a primeira vez, o sistema precisa confirmar o seu e-mail por motivos de segurança. Você será redirecionado, por favor siga os passos na tela e cheque o e-mail 'pesquisasemusa@gmail.com'.");
-                
-                // Força o envio direto via HTML. 
-                // Vai abrir a tela do FormSubmit mandando olhar sua caixa de e-mail.
-                form.submit(); 
+                console.error("Erro:", error);
+                alert("Erro de conexão. Verifique sua internet.");
+                btn.innerHTML = textoOriginal;
+                btn.disabled = false;
+                btn.classList.remove("opacity-70", "cursor-not-allowed");
             });
         });
     </script>
